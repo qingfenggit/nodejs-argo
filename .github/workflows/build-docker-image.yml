@@ -2,13 +2,13 @@ name: Build and Push Docker Image
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main,own ]
     paths:
       - 'Dockerfile'
       - 'index.js'
       - 'package.json'
   pull_request:
-    branches: [ main ]
+    branches: [ main,own ]
   workflow_dispatch:
 
 jobs:
@@ -39,7 +39,8 @@ jobs:
           push: true
           platforms: linux/amd64,linux/arm64
           tags: |
-            ghcr.io/${{ github.repository_owner }}/nodejs:main
+            ghcr.io/${{ github.repository_owner }}/nodejs:${{ github.ref_name }}
+            ${{ github.ref == 'refs/heads/main' && format('ghcr.io/{0}/nodejs:latest', github.repository_owner) || '' }}
           labels: |
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
             org.opencontainers.image.description=HTTP Server
